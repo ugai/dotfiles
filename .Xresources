@@ -1,0 +1,51 @@
+Xft.dpi:                        132.4
+
+URxvt*termName:                 rxvt-256color
+URxvt*scrollBar:                true
+URxvt*scrollBar_right:          true
+URxvt*scrollstyle:              plain
+URxvt*geometry:                 140x56
+
+#define termfont                xft:RictyDiscord Nerd Font:style=Regular:pixelsize=20:antialias=false
+URxvt*font:                     termfont
+URxvt*boldFont:                 termfont
+URxvt*italicFont:               termfont
+URxvt*boldItalicFont:           termfont
+URxvt*letterSpace:              -1
+
+URxvt*depth:                    32
+URxvt*visualBell:               false
+URxvt*perl-ext-common:          default,clipboard,url-select,keyboard-select
+URxvt*clipboard.autocopy:       true
+URxvt*url-select.launcher:      chromium
+URxvt*url-select.underline:     true
+URxvt*keysym.M-u:               perl:url-select:select_next
+URxvt*keysym.M-Escape:          perl:keyboard-select:activate
+URxvt*keysym.M-s:               perl:keyboard-select:search
+URxvt*keysym.Shift-Control-C:   perl:clipboard:copy
+URxvt*keysym.Shift-Control-V:   perl:clipboard:paste
+
+*scrollColor:  [99]#333333
+*cursorColor:  #ffbf62
+*cursorColor2: #282a36
+*colorUL:      #5af78e
+!*background:   [99]#282a36
+*background:   [99]#282828
+*foreground:   #eff0eb
+*color0:       #33303b
+*color8:       #4f4b58
+*color1:       #ff5c57
+*color9:       #ff5c57
+*color2:       #5af78e
+*color10:      #5af78e
+*color3:       #f3f99d
+*color11:      #f3f99d
+*color4:       #57c7ff
+*color12:      #57c7ff
+*color5:       #ff6ac1
+*color13:      #ff6ac1
+*color6:       #9aedfe
+*color14:      #9aedfe
+*color7:       #eff0eb
+*color15:      #eff0eb
+
