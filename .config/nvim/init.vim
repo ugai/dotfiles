@@ -2,38 +2,32 @@
 " vim-plug {{{
 " Specify a directory for plugins
 " - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('~/.local/share/nvim/plugged')
-    " Lint
-    Plug 'w0rp/ale'
+call plug#begin(stdpath('data') . '/plugged')
+    " LSP
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'mattn/vim-lsp-settings'
+
+    " Telescope (fuzzy finder)
+    Plug 'nvim-lua/popup.nvim'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
 
     " UI
-    Plug 'Yggdroot/indentLine'
-    Plug 'itchyny/lightline.vim'
-    Plug 'maximbaz/lightline-ale'
-    Plug 'junegunn/limelight.vim'
-    Plug 'mhinz/vim-signify'
+    Plug 'mhinz/vim-startify'
+    Plug 'lukas-reineke/indent-blankline.nvim'
+    Plug 'airblade/vim-gitgutter'
     Plug 'sheerun/vim-polyglot'
-    Plug 'simeji/winresizer'
     Plug 'lfv89/vim-interestingwords'
-    Plug 'ap/vim-css-color'
-    Plug 'scrooloose/nerdtree'
-    Plug 'lambdalisue/vim-manpager'
+    Plug 'norcalli/nvim-colorizer.lua'
+    Plug 'ojroques/nvim-hardline'
 
     " Editing
     Plug 'junegunn/vim-easy-align'
-    Plug 'sbdchd/neoformat'
     Plug 'tpope/vim-surround'
-    Plug 'Shougo/denite.nvim'
-        Plug 'Shougo/neomru.vim' " for 'file_mru'
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-        Plug 'Shougo/neco-syntax'
 
     " Colorscheme
     Plug 'jacoborus/tender.vim'
-
-    " UI
-    Plug 'ryanoasis/vim-devicons' " Nerd Fonts required. Load after all supported plugins. 
-
 call plug#end()
 " }}} vim-plug
 
@@ -49,7 +43,6 @@ let g:lightline = { 'colorscheme': 'tender' }
 set ruler
 set hidden
 set number
-"set guifont=RictyDiscord\ Nerd\ Font\ 11
 set mouse=a
 
 " Search
@@ -80,7 +73,7 @@ set virtualedit=block
 set clipboard+=unnamedplus
 noremap <F4> :tabnew<CR>
 noremap <F5> :e!<CR>
-noremap <F9> :NERDTreeToggle<CR>
+"noremap <F9> :NERDTreeToggle<CR>
 noremap <F12> :split<CR>
 noremap <S-F12> :vsplit<CR>
 noremap <C-Left> :bprev<CR>
@@ -88,74 +81,66 @@ noremap <C-Right> :bnext<CR>
 nnoremap <ESC><ESC> :nohlsearch<CR>
 nnoremap S diw"0P
 
-" ale {{{
-let g:ale_fixers = {
-            \   'javascript': ['prettier'],
-            \   'python': ['flake8'],
-            \}
-let g:ale_completion_enabled = 1
-let g:ale_open_list = 1
-autocmd QuitPre * if empty(&bt) | lclose | endif
-" }}}
-
-" deoplete.vim
-let g:deoplete#enable_at_startup = 1
-
-" denite.vim {{{
-nnoremap <C-p> :Denite file/rec buffer file_mru<CR>
-let g:neomru#follow_links = 1
-"   Change file/rec command.
-call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
-"   Change mappings.
-call denite#custom#map('insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
-call denite#custom#map('insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
-call denite#custom#map('insert', '<Down>', '<denite:move_to_next_line>', 'noremap')
-call denite#custom#map('insert', '<Up>', '<denite:move_to_previous_line>', 'noremap')
-"   Ripgrep command on grep source
-call denite#custom#var('grep', 'command', ['rg'])
-call denite#custom#var('grep', 'default_opts', ['--vimgrep', '--no-heading'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'final_opts', [])
-"   Change ignore_globs
-call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-      \ [ '.git/', '.ropeproject/', '__pycache__/',
-      \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
-" }}}
-
 " vim-easy-align
 "   Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 "   Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-" lightline.vim {{{
-set noshowmode
-" lightline-ale
-let g:lightline = {}
-let g:lightline.component_expand = {
-      \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_warnings': 'lightline#ale#warnings',
-      \  'linter_errors': 'lightline#ale#errors',
-      \  'linter_ok': 'lightline#ale#ok',
-      \ }
-let g:lightline.component_type = {
-      \     'linter_checking': 'left',
-      \     'linter_warnings': 'warning',
-      \     'linter_errors': 'error',
-      \     'linter_ok': 'left',
-      \ }
-let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]] }
-let g:lightline#ale#indicator_checking = "\uf110 "
-let g:lightline#ale#indicator_warnings = "\uf071 "
-let g:lightline#ale#indicator_errors = "\uf05e "
-let g:lightline#ale#indicator_ok = "\uf00c "
-" }}}
-
-" vim-signify
-let g:signify_realtime = 1
-let g:signify_vcs_list = [ 'git', 'hg' ]
-
 " NERDTree
-let NERDTreeShowHidden = 1
+"let NERDTreeShowHidden = 1
+
+" vim-lsp
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+" asyncomplete.vim
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
+
+" Telescope
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>fr <cmd>Telescope oldfiles<cr>
+
+" nvim-hardline
+lua require('hardline').setup {}
+
+" nvim-colorizer.lua
+lua require('colorizer').setup {}
+
+if has('win32')
+    " from `:help shell-powershell`
+    let &shell = has('win32') ? 'powershell' : 'pwsh'
+    let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+    let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+    let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+    set shellquote= shellxquote=
+endif

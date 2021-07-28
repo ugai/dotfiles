@@ -47,28 +47,7 @@ function create_link () {
 no_subdir
 create_link .Xresources
 create_link .bashrc
-create_link .mypy.ini
 create_link .zshrc
-
-use_subdir .config
-create_link flake8
 
 use_subdir .config/nvim
 create_link init.vim
-
-use_subdir .config/kitty
-create_link kitty.conf
-
-use_subdir .config/alacritty
-create_link alacritty.yml
-
-use_subdir .config/awesome
-create_link rc.lua
-create_link mytheme.lua
-create_link autorun.sh
-create_link reddit_kabegami.py
-[ $DRY_RUN -eq 0 ] && (pushd ${HOME_DIR}/${SUBDIR} && [ -d battery-widget ] || git clone https://github.com/deficient/battery-widget.git; popd)
-[ $DRY_RUN -eq 0 ] && (pushd ${HOME_DIR}/${SUBDIR} && [ -d volume-control ] || git clone https://github.com/deficient/volume-control.git; popd)
-[ $DRY_RUN -eq 0 ] && (pushd ${HOME_DIR}/${SUBDIR} && [ -d lua-sputnikcolors ] || git clone https://github.com/tst2005/lua-sputnikcolors.git; popd)
-[ $DRY_RUN -eq 0 ] && (pushd ${HOME_DIR}/${SUBDIR} && [ -d freedesktop ] || git clone https://github.com/lcpz/awesome-freedesktop.git freedesktop; popd)
-
