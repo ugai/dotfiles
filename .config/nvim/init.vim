@@ -4,8 +4,9 @@
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin(stdpath('data') . '/plugged')
     " LSP
-    Plug 'prabirshrestha/vim-lsp'
     Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'prabirshrestha/asyncomplete-lsp.vim'
     Plug 'mattn/vim-lsp-settings'
 
     " Telescope (fuzzy finder)
