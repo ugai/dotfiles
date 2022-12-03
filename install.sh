@@ -51,3 +51,6 @@ create_link .zshrc
 
 use_subdir .config/nvim
 create_link init.vim
+
+use_subdir .config/mpv
+create_link mpv.conf
