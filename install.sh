@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
 
@@ -22,10 +22,6 @@ if [ "$RET" != "y" ]; then
     exit $EXIT_FAILURE
 fi
 
-function is_dryrun() {
-    [ $DRY_RUN -eq 1 ] && return $EXIT_SUCCESS || return $EXIT_FAILURE 
-}
-
 function no_subdir() {
     SUBDIR=
     echo "subdir="
@@ -34,7 +30,7 @@ function no_subdir() {
 function use_subdir() {
     SUBDIR=$1
     echo "subdir='$SUBDIR'"
-    is_dryrun && mkdir -p ${HOME_DIR}/${SUBDIR}
+    [ $DRY_RUN -eq 0 ] && mkdir -p ${HOME_DIR}/${SUBDIR}
 }
 
 function create_link () {
