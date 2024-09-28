@@ -43,6 +43,7 @@ function create_link () {
 no_subdir
 create_link .Xresources
 create_link .bashrc
+create_link .tmux.conf
 create_link .zshrc
 
 use_subdir .config/nvim
