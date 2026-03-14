@@ -26,11 +26,39 @@ config.window_background_opacity = 0.75
 config.win32_system_backdrop = "Acrylic"
 
 config.audible_bell = "Disabled"
+config.visual_bell = {
+	fade_in_function = "EaseIn",
+	fade_in_duration_ms = 100,
+	fade_out_function = "EaseOut",
+	fade_out_duration_ms = 200,
+	target = "BackgroundColor",
+}
 
 -- Tab bar
 config.use_fancy_tab_bar = true
-config.tab_bar_at_bottom = true
+config.tab_bar_at_bottom = false
 config.hide_tab_bar_if_only_one_tab = false
+
+-- Window decorations: integrate title bar buttons into tab bar
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+config.window_frame = {
+	active_titlebar_bg = "none",
+	inactive_titlebar_bg = "none",
+	font = wezterm.font_with_fallback({
+		"Berkeley Mono",
+		"Cascadia Code",
+		"Consolas",
+		"M PLUS 1 Code",
+		"BIZ UDGothic",
+	}),
+}
+
+config.scrollback_lines = 10000
+config.enable_scroll_bar = true
+config.colors = {
+	scrollbar_thumb = "#333",
+	visual_bell = "#444444",
+}
 
 -- Panes
 config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.6 }
@@ -48,7 +76,6 @@ end
 
 -- Leader key (CTRL+B, like tmux)
 config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
-
 
 config.keys = {
 	-- Pane splitting
@@ -75,7 +102,6 @@ config.keys = {
 	{ key = "s", mods = "LEADER", action = wezterm.action.ShowLauncherArgs({ flags = "WORKSPACES" }) },
 	-- Reset font size
 	{ key = "0", mods = "CTRL", action = wezterm.action.ResetFontSize },
-
 }
 
 -- Mouse bindings
