@@ -1,54 +1,31 @@
-#!/bin/bash
-EXIT_SUCCESS=0
-EXIT_FAILURE=1
+#!/usr/bin/env bash
+set -euo pipefail
 
-DRY_RUN=0
-REPO_DIR=$PWD
-HOME_DIR=$HOME
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ "$1" = "-h" ]; then
-    echo "Usage: install.sh [-h] [--dry-run]"
-    exit $EXIT_FAILURE
-elif [ "$1" = "--dry-run" ]; then
-    DRY_RUN=1
-fi
+# Resolved Python command (populated by find_python)
+PYTHON_CMD=()
 
-echo "'$REPO_DIR' -> '$HOME_DIR'"
-echo -n "Continue? [y/N]: "
-read RET
+find_python() {
+    # Prefer uv if available
+    if command -v uv &>/dev/null; then
+        PYTHON_CMD=("uv" "run")
+        return
+    fi
 
-if [ "$RET" != "y" ]; then
-    echo "Cancelled."
-    exit $EXIT_FAILURE
-fi
+    for cmd in python3 python; do
+        if command -v "$cmd" &>/dev/null; then
+            # Require Python 3.9+
+            if "$cmd" -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>/dev/null; then
+                PYTHON_CMD=("$cmd")
+                return
+            fi
+        fi
+    done
 
-function no_subdir() {
-    SUBDIR=
-    echo "subdir="
+    echo "Error: Python 3.9+ not found. Install Python or uv and try again." >&2
+    exit 1
 }
 
-function use_subdir() {
-    SUBDIR=$1
-    echo "subdir='$SUBDIR'"
-    [ $DRY_RUN -eq 0 ] && mkdir -p ${HOME_DIR}/${SUBDIR}
-}
-
-function create_link () {
-    local SRC=$(realpath -sm "${REPO_DIR}/${SUBDIR}/$1")
-    local DST=$(realpath -sm "${HOME_DIR}/${SUBDIR}/$1")
-    echo "link: '$SRC' -> '$DST'"
-    [ $DRY_RUN -eq 0 ] && ln -fs $SRC $DST
-}
-
-no_subdir
-create_link .Xresources
-create_link .bashrc
-create_link .tmux.conf
-create_link .wezterm.lua
-create_link .zshrc
-
-use_subdir .config
-create_link nvim
-
-use_subdir .config/mpv
-create_link mpv.conf
+find_python
+exec "${PYTHON_CMD[@]}" "$SCRIPT_DIR/install.py" "$@"
