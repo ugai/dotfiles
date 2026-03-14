@@ -2,7 +2,8 @@ local wezterm = require("wezterm")
 local mux = wezterm.mux
 local config = wezterm.config_builder()
 
-config.font = wezterm.font_with_fallback({
+-- Fonts
+local font_families = {
 	-- Preferred (install manually)
 	"Berkeley Mono",
 	-- Windows built-in / common
@@ -17,14 +18,22 @@ config.font = wezterm.font_with_fallback({
 	"Yu Gothic",
 	"Meiryo",
 	"Noto Sans CJK JP",
-})
+}
+config.font = wezterm.font_with_fallback(font_families)
+
+-- Appearance
 config.color_scheme = "flexoki-dark"
-
+config.colors = {
+	scrollbar_thumb = "#333",
+	visual_bell = "#444444",
+}
 config.front_end = "WebGpu"
-
 config.window_background_opacity = 0.75
 config.win32_system_backdrop = "Acrylic"
+config.window_padding = { left = 8, right = 8, top = 8, bottom = 8 }
+config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.6 }
 
+-- Bell
 config.audible_bell = "Disabled"
 config.visual_bell = {
 	fade_in_function = "EaseIn",
@@ -34,42 +43,27 @@ config.visual_bell = {
 	target = "BackgroundColor",
 }
 
--- Tab bar
+-- Tab bar & window decorations
 config.use_fancy_tab_bar = true
 config.tab_bar_at_bottom = false
 config.hide_tab_bar_if_only_one_tab = false
-
--- Window decorations: integrate title bar buttons into tab bar
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 config.window_frame = {
 	active_titlebar_bg = "none",
 	inactive_titlebar_bg = "none",
-	font = wezterm.font_with_fallback({
-		"Berkeley Mono",
-		"Cascadia Code",
-		"Consolas",
-		"M PLUS 1 Code",
-		"BIZ UDGothic",
-	}),
+	font = wezterm.font_with_fallback(font_families),
 }
 
+-- Scrollback
 config.scrollback_lines = 10000
 config.enable_scroll_bar = true
-config.colors = {
-	scrollbar_thumb = "#333",
-	visual_bell = "#444444",
-}
 
--- Panes
-config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.6 }
-
-config.use_ime = true
-
+-- Window size & input
 config.initial_cols = 120
 config.initial_rows = 30
+config.use_ime = true
 
-config.window_padding = { left = 8, right = 8, top = 8, bottom = 8 }
-
+-- Platform
 if wezterm.target_triple:find("windows") then
 	config.default_prog = { "pwsh.exe", "-NoLogo" }
 end
