@@ -28,9 +28,9 @@ config.win32_system_backdrop = "Acrylic"
 config.audible_bell = "Disabled"
 
 -- Tab bar
-config.use_fancy_tab_bar = false
+config.use_fancy_tab_bar = true
 config.tab_bar_at_bottom = true
-config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = false
 
 -- Panes
 config.inactive_pane_hsb = { saturation = 0.8, brightness = 0.6 }
