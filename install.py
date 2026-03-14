@@ -12,6 +12,9 @@ MIN_PYTHON = (3, 9)
 if sys.version_info < MIN_PYTHON:
     sys.exit(f"Python {'.'.join(str(v) for v in MIN_PYTHON)}+ required (current: {platform.python_version()})")
 
+if platform.system() == "Darwin":
+    sys.exit("macOS is not supported. Paths and plugins differ — configure manually.")
+
 
 def is_windows() -> bool:
     return platform.system() == "Windows"
