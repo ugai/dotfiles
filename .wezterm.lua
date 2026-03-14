@@ -68,6 +68,42 @@ if wezterm.target_triple:find("windows") then
 	config.default_prog = { "pwsh.exe", "-NoLogo" }
 end
 
+-- Multi-pane split helpers
+-- Usage: F9 → 2/3/4/g → h/v
+local function pane_cwd(pane)
+	local cwd = pane:get_current_working_dir()
+	if cwd then
+		return type(cwd) == "userdata" and cwd.file_path or tostring(cwd)
+	end
+end
+
+-- Split into n equal panes along the given direction ("Right" or "Bottom")
+local function split_line(pane, direction, n)
+	local cwd = pane_cwd(pane)
+	local current = pane
+	for i = 0, n - 2 do
+		current = current:split({ direction = direction, cwd = cwd, size = (n - 1 - i) / (n - i) })
+	end
+end
+
+-- Split into 2x2 grid
+local function split_grid(_, pane)
+	local cwd = pane_cwd(pane)
+	local right = pane:split({ direction = "Right", cwd = cwd, size = 0.5 })
+	pane:split({ direction = "Bottom", cwd = cwd, size = 0.5 })
+	right:split({ direction = "Bottom", cwd = cwd, size = 0.5 })
+end
+
+-- Close all panes in the current tab except the active one
+local function close_other_panes(window, pane)
+	local current_id = pane:pane_id()
+	for _, p in ipairs(window:mux_window():active_tab():panes()) do
+		if p:pane_id() ~= current_id then
+			window:perform_action(wezterm.action.CloseCurrentPane({ confirm = false }), p)
+		end
+	end
+end
+
 -- Leader key (CTRL+B, like tmux)
 config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
 
@@ -86,6 +122,7 @@ config.keys = {
 	{ key = "RightArrow", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Right") },
 	-- Pane close
 	{ key = "x", mods = "LEADER", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
+	{ key = "X", mods = "LEADER|SHIFT", action = wezterm.action_callback(close_other_panes) },
 	-- Tab management
 	{ key = "c", mods = "LEADER", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
 	{ key = "n", mods = "LEADER", action = wezterm.action.ActivateTabRelative(1) },
@@ -96,6 +133,34 @@ config.keys = {
 	{ key = "s", mods = "LEADER", action = wezterm.action.ShowLauncherArgs({ flags = "WORKSPACES" }) },
 	-- Reset font size
 	{ key = "0", mods = "CTRL", action = wezterm.action.ResetFontSize },
+	-- Multi-pane split mode
+	{ key = "F9", action = wezterm.action.ActivateKeyTable({ name = "split_mode", one_shot = false, timeout_milliseconds = 5000 }) },
+}
+
+-- Key tables for split mode: F9 → 2/3/4/g → h/v
+config.key_tables = {
+	split_mode = {
+		{ key = "2", action = wezterm.action.ActivateKeyTable({ name = "split_dir_2", one_shot = true }) },
+		{ key = "3", action = wezterm.action.ActivateKeyTable({ name = "split_dir_3", one_shot = true }) },
+		{ key = "4", action = wezterm.action.ActivateKeyTable({ name = "split_dir_4", one_shot = true }) },
+		{ key = "g", action = wezterm.action_callback(split_grid) },
+		{ key = "Escape", action = wezterm.action.PopKeyTable },
+	},
+	split_dir_2 = {
+		{ key = "h", action = wezterm.action_callback(function(_, p) split_line(p, "Right", 2) end) },
+		{ key = "v", action = wezterm.action_callback(function(_, p) split_line(p, "Bottom", 2) end) },
+		{ key = "Escape", action = wezterm.action.PopKeyTable },
+	},
+	split_dir_3 = {
+		{ key = "h", action = wezterm.action_callback(function(_, p) split_line(p, "Right", 3) end) },
+		{ key = "v", action = wezterm.action_callback(function(_, p) split_line(p, "Bottom", 3) end) },
+		{ key = "Escape", action = wezterm.action.PopKeyTable },
+	},
+	split_dir_4 = {
+		{ key = "h", action = wezterm.action_callback(function(_, p) split_line(p, "Right", 4) end) },
+		{ key = "v", action = wezterm.action_callback(function(_, p) split_line(p, "Bottom", 4) end) },
+		{ key = "Escape", action = wezterm.action.PopKeyTable },
+	},
 }
 
 -- Mouse bindings
@@ -144,14 +209,25 @@ wezterm.on("format-window-title", function(tab, pane, tabs, panes, _)
 	return tab.active_pane.title
 end)
 
--- Status bar: workspace name (left) + time (right)
+-- Status bar: workspace name + key table mode (left) + hints + time (right)
+local split_mode_hints = {
+	split_mode  = "SPLIT  2/3/4/g",
+	split_dir_2 = "SPLIT-2  h/v",
+	split_dir_3 = "SPLIT-3  h/v",
+	split_dir_4 = "SPLIT-4  h/v",
+}
 wezterm.on("update-status", function(window, _)
+	local mode = split_mode_hints[window:active_key_table() or ""]
+	local left = "  " .. window:active_workspace() .. "  "
+	if mode then
+		left = left .. "  " .. mode .. "  "
+	end
 	window:set_left_status(wezterm.format({
 		{ Attribute = { Intensity = "Bold" } },
-		{ Text = "  " .. window:active_workspace() .. "  " },
+		{ Text = left },
 	}))
 	window:set_right_status(wezterm.format({
-		{ Text = wezterm.strftime("  %H:%M  ") },
+		{ Text = "  F9:split  │  " .. wezterm.strftime("%H:%M  ") },
 	}))
 end)
 
