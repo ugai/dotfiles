@@ -49,6 +49,7 @@ end
 -- Leader key (CTRL+B, like tmux)
 config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
 
+
 config.keys = {
 	-- Pane splitting
 	{ key = "%", mods = "LEADER|SHIFT", action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
@@ -70,8 +71,11 @@ config.keys = {
 	{ key = "p", mods = "LEADER", action = wezterm.action.ActivateTabRelative(-1) },
 	-- Zoom pane
 	{ key = "z", mods = "LEADER", action = wezterm.action.TogglePaneZoomState },
+	-- Workspace switcher
+	{ key = "s", mods = "LEADER", action = wezterm.action.ShowLauncherArgs({ flags = "WORKSPACES" }) },
 	-- Reset font size
 	{ key = "0", mods = "CTRL", action = wezterm.action.ResetFontSize },
+
 }
 
 -- Mouse bindings
