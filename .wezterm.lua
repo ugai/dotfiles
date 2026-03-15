@@ -165,6 +165,22 @@ config.key_tables = {
 
 -- Mouse bindings
 config.mouse_bindings = {
+	-- Disable default single-click URL open; require CTRL+click instead
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "NONE",
+		action = wezterm.action.CompleteSelection("ClipboardAndPrimarySelection"),
+	},
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "CTRL",
+		action = wezterm.action.OpenLinkAtMouseCursor,
+	},
+	{
+		event = { Down = { streak = 1, button = "Left" } },
+		mods = "CTRL",
+		action = wezterm.action.Nop,
+	},
 	-- Right-click: copy+clear if text is selected, paste otherwise
 	{
 		event = { Down = { streak = 1, button = "Right" } },
