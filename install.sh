@@ -28,4 +28,4 @@ find_python() {
 }
 
 find_python
-exec "${PYTHON_CMD[@]}" "$SCRIPT_DIR/install.py" "$@"
+exec "${PYTHON_CMD[@]}" "$SCRIPT_DIR/_install.py" "$@"

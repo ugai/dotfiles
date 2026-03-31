@@ -40,7 +40,8 @@ def get_platform_dirs() -> dict[str, Path]:
 def get_links(dirs: dict[str, Path]) -> list[tuple[Path, Path]]:
     home = dirs["home"]
     common = [
-        (REPO / ".wezterm.lua", home / ".wezterm.lua"),
+        (REPO / ".wezterm.lua",                      home / ".wezterm.lua"),
+        (REPO / ".claude" / "statusline-command.sh", home / ".claude" / "statusline-command.sh"),
     ]
 
     if is_windows():

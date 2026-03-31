@@ -23,7 +23,7 @@ function Find-Python {
 $python = Find-Python
 
 if ($null -eq $python) {
-    & uv run "$ScriptDir\install.py" @args
+    & uv run "$ScriptDir\_install.py" @args
 } else {
-    & $python "$ScriptDir\install.py" @args
+    & $python "$ScriptDir\_install.py" @args
 }
