@@ -10,7 +10,9 @@ from pathlib import Path
 MIN_PYTHON = (3, 9)
 
 if sys.version_info < MIN_PYTHON:
-    sys.exit(f"Python {'.'.join(str(v) for v in MIN_PYTHON)}+ required (current: {platform.python_version()})")
+    sys.exit(
+        f"Python {'.'.join(str(v) for v in MIN_PYTHON)}+ required (current: {platform.python_version()})"
+    )
 
 if platform.system() == "Darwin":
     sys.exit("macOS is not supported. Paths and plugins differ — configure manually.")
@@ -40,23 +42,29 @@ def get_platform_dirs() -> dict[str, Path]:
 def get_links(dirs: dict[str, Path]) -> list[tuple[Path, Path]]:
     home = dirs["home"]
     common = [
-        (REPO / ".wezterm.lua",                      home / ".wezterm.lua"),
-        (REPO / ".claude" / "statusline-command.sh", home / ".claude" / "statusline-command.sh"),
+        (REPO / ".wezterm.lua", home / ".wezterm.lua"),
+        (
+            REPO / ".claude" / "statusline-command.sh",
+            home / ".claude" / "statusline-command.sh",
+        ),
     ]
 
     if is_windows():
         return common + [
-            (REPO / ".config" / "nvim",             dirs["local_app_data"] / "nvim"),
-            (REPO / ".config" / "mpv" / "mpv.conf", dirs["app_data"] / "mpv" / "mpv.conf"),
+            (REPO / ".config" / "nvim", dirs["local_app_data"] / "nvim"),
+            (
+                REPO / ".config" / "mpv" / "mpv.conf",
+                dirs["app_data"] / "mpv" / "mpv.conf",
+            ),
         ]
     else:
         xdg = dirs["xdg_config"]
         return common + [
             (REPO / ".Xresources", home / ".Xresources"),
-            (REPO / ".bashrc",     home / ".bashrc"),
-            (REPO / ".tmux.conf",  home / ".tmux.conf"),
-            (REPO / ".zshrc",      home / ".zshrc"),
-            (REPO / ".config" / "nvim",             xdg / "nvim"),
+            (REPO / ".bashrc", home / ".bashrc"),
+            (REPO / ".tmux.conf", home / ".tmux.conf"),
+            (REPO / ".zshrc", home / ".zshrc"),
+            (REPO / ".config" / "nvim", xdg / "nvim"),
             (REPO / ".config" / "mpv" / "mpv.conf", xdg / "mpv" / "mpv.conf"),
         ]
 
@@ -69,7 +77,9 @@ def create_link(src: Path, dst: Path, dry_run: bool) -> None:
     dst.parent.mkdir(parents=True, exist_ok=True)
     if dst.exists() or dst.is_symlink():
         if dst.is_dir() and not dst.is_symlink():
-            print(f"    [skip] {dst} is a real directory — remove it manually to replace")
+            print(
+                f"    [skip] {dst} is a real directory — remove it manually to replace"
+            )
             return
         dst.unlink()
     try:
@@ -86,8 +96,12 @@ def create_link(src: Path, dst: Path, dry_run: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Install dotfiles via symlinks.")
-    parser.add_argument("--dry-run", action="store_true", help="Print links without creating them")
-    parser.add_argument("-y", "--yes",  action="store_true", help="Skip confirmation prompt")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print links without creating them"
+    )
+    parser.add_argument(
+        "-y", "--yes", action="store_true", help="Skip confirmation prompt"
+    )
     args = parser.parse_args()
 
     dirs = get_platform_dirs()
