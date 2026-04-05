@@ -16,4 +16,4 @@ or Windows:
 
 Options: `--dry-run`, `-y`
 
-Requires Python 3.9+ or [uv](https://github.com/astral-sh/uv) (preferred).
+Requires [uv](https://github.com/astral-sh/uv) (preferred) or Python (see `_python_version.py` for minimum version).

@@ -13,7 +13,7 @@ Personal dotfiles for Linux and Windows. All logic lives in `_install.py`; the s
 .\install.ps1 [--dry-run] [-y]  # Windows
 ```
 
-Requires Python 3.9+ or `uv` (preferred). macOS is intentionally unsupported.
+Requires `uv` (preferred) or Python (see `_python_version.py` for minimum version). macOS is intentionally unsupported.
 
 ## Architecture
 
