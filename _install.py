@@ -35,26 +35,28 @@ def get_repo_root() -> Path:
 @dataclass
 class PlatformDirs:
     home: Path
+    user_config: Path
 
 
 @dataclass(kw_only=True)
 class WindowsPlatformDirs(PlatformDirs):
     local_app_data: Path
-    app_data: Path
 
 
 def get_platform_dirs() -> WindowsPlatformDirs | PlatformDirs:
     if IS_WINDOWS:
-        home = Path(os.environ["USERPROFILE"])
         dirs = {
-            "home": home,
-            "local_app_data": Path(os.environ["LOCALAPPDATA"]),
-            "app_data": Path(os.environ["APPDATA"]),
+            "home": Path(os.environ["USERPROFILE"]),
+            "user_config": Path(os.environ["APPDATA"]),  # AppData/Roaming
+            "local_app_data": Path(os.environ["LOCALAPPDATA"]),  # AppData/Local
         }
         return WindowsPlatformDirs(**dirs)
     else:
         home = Path.home()
-        dirs = {"home": home}
+        dirs = {
+            "home": home,
+            "user_config": home / ".config",
+        }
         return PlatformDirs(**dirs)
 
 
@@ -68,17 +70,18 @@ def get_links(dirs: WindowsPlatformDirs | PlatformDirs) -> list[tuple[Path, Path
     repo = get_repo_root()
     repo_config = repo / ".config"
     home = dirs.home
-    home_config = home / ".config"
 
     common_links = [
         get_link(repo, home, ".wezterm.lua"),
         get_link(repo, home, [".claude", "statusline-command.sh"]),
+        get_link(repo, home, ".npmrc"),
+        get_link(repo_config, dirs.user_config, ["mpv", "mpv.conf"]),
+        get_link(repo_config, dirs.user_config, ["uv", "uv.toml"]),
     ]
 
     if isinstance(dirs, WindowsPlatformDirs):
         platform_links = [
             get_link(repo_config, dirs.local_app_data, "nvim"),
-            get_link(repo_config, dirs.app_data, ["mpv", "mpv.conf"]),
         ]
     else:
         platform_links = [
@@ -86,8 +89,7 @@ def get_links(dirs: WindowsPlatformDirs | PlatformDirs) -> list[tuple[Path, Path
             get_link(repo, home, ".bashrc"),
             get_link(repo, home, ".tmux.conf"),
             get_link(repo, home, ".zshrc"),
-            get_link(repo_config, home_config, "nvim"),
-            get_link(repo_config, home_config, ["mpv", "mpv.conf"]),
+            get_link(repo_config, dirs.user_config, "nvim"),
         ]
 
     return common_links + platform_links
